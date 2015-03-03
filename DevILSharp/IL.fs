@@ -9,6 +9,14 @@ open System.IO.Compression
 
 
 module Bootstrap =
+    let private config = 
+        """<configuration>
+  <dllmap os="linux" dll="DevIL.dll" target="libIL.so"/>
+  <dllmap os="linux" dll="ILU.dll" target="libILU.so"/>
+  <dllmap os="linux" dll="ILUT.dll" target="libILUT.so"/>
+</configuration>
+"""
+
     let private save (entry : ZipArchiveEntry) =
         if entry.Length > 0L then
             let name = entry.Name
@@ -24,6 +32,8 @@ module Bootstrap =
         let ass = Assembly.GetExecutingAssembly()
         use stream = ass.GetManifestResourceStream("DevIL.zip")
         use archive = new ZipArchive(stream)
+
+        File.WriteAllText("DevILSharp.dll.config", config)
 
         let os =
             match Environment.OSVersion.Platform with
@@ -329,14 +339,19 @@ module IL =
     extern bool SavePal(string FileName);
 
     let SaveStream(imageType : ImageType, stream : Stream) =
-        let size = GetInteger(GetName.ImageSizeOfData)
-        let arr : byte[] = Array.zeroCreate (2 * size)
-        let gc = GCHandle.Alloc(arr, GCHandleType.Pinned)
+        let size = SaveL(imageType, 0n, 0)
+        if size = 0 then 
+            false
+        else
+            let arr : byte[] = Array.zeroCreate size
 
-        let dataSize = SaveL(imageType, gc.AddrOfPinnedObject(), size)
-        stream.Write(arr, 0, dataSize)
 
-        gc.Free()
+            let gc = GCHandle.Alloc(arr, GCHandleType.Pinned)
+            let dataSize = SaveL(imageType, gc.AddrOfPinnedObject(), size)
+            stream.Write(arr, 0, dataSize)
+
+            gc.Free()
+            true
 
 
     [<DllImport(lib, EntryPoint="ilSetAlpha")>]

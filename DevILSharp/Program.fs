@@ -1,4 +1,5 @@
 ﻿#if INTERACTIVE
+#r @"..\bin\Debug\DevilSharp.dll"
 #else
 namespace DevILSharp.Demo
 #endif
@@ -42,7 +43,7 @@ module Demo =
         IL.ConvertImage(Format.RGB, ChannelType.UnsignedByte) |> IL.check "could not convert image"
     
         use s = new System.IO.FileStream("C:\\Users\\haaser\\Desktop\\test2.png", IO.FileMode.Create)
-        IL.SaveStream(ImageType.Png, s)
+        IL.SaveStream(ImageType.Png, s) |> IL.check "could not save stream"
 
         gc.Free()
         IL.BindImage(0)
