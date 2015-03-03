@@ -15,7 +15,7 @@ module Demo =
 
         IL.BindImage(img)
         use s = new System.IO.FileStream(@"C:\Users\haaser\Desktop\SixteenBitRGB.tif", IO.FileMode.Open)
-        IL.LoadStream(ImageType.Tif, s) |> IL.check "could not load image"
+        IL.LoadStream(s) |> IL.check "could not load image"
 
         let ptr = IL.GetData()
         let size = IL.GetInteger(GetName.ImageSizeOfData)
