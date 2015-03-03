@@ -234,21 +234,6 @@ module IL =
     [<DllImport(lib, EntryPoint="ilLoadL")>]
     extern bool LoadL(ImageType Type, void *Lump, int Size);
 
-    let LoadStream (s : System.IO.Stream) =
-        
-        let bytes = Array.zeroCreate (int s.Length)
-        let mutable read = 0
-        while read < bytes.Length do
-            let r = s.Read(bytes, read, bytes.Length - read)
-            read <- read + r
-
-        
-        let gc = GCHandle.Alloc(bytes, GCHandleType.Pinned)
-        let imageType = DetermineTypeL(gc.AddrOfPinnedObject(), bytes.Length)
-        let res = LoadL(imageType, gc.AddrOfPinnedObject(), bytes.Length)
-        gc.Free()
-
-        res
 
     let LoadStreamWithType (imageType : ImageType, s : System.IO.Stream) =
         
@@ -263,6 +248,9 @@ module IL =
         gc.Free()
 
         res
+
+    let LoadStream (s : System.IO.Stream) =
+        LoadStreamWithType(ImageType.Unkwown, s)
 
     [<DllImport(lib, EntryPoint="ilLoadPal")>]
     extern bool LoadPal(string FileName);
@@ -339,6 +327,17 @@ module IL =
 
     [<DllImport(lib, EntryPoint="ilSavePal")>]
     extern bool SavePal(string FileName);
+
+    let SaveStream(imageType : ImageType, stream : Stream) =
+        let size = GetInteger(GetName.ImageSizeOfData)
+        let arr : byte[] = Array.zeroCreate (2 * size)
+        let gc = GCHandle.Alloc(arr, GCHandleType.Pinned)
+
+        let dataSize = SaveL(imageType, gc.AddrOfPinnedObject(), size)
+        stream.Write(arr, 0, dataSize)
+
+        gc.Free()
+
 
     [<DllImport(lib, EntryPoint="ilSetAlpha")>]
     extern bool SetAlpha(float AlphaValue);

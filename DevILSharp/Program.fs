@@ -1,5 +1,7 @@
-﻿namespace DevILSharp.Demo
-
+﻿#if INTERACTIVE
+#else
+namespace DevILSharp.Demo
+#endif
 
 open System
 open System.Runtime.InteropServices
@@ -39,7 +41,8 @@ module Demo =
         IL.TexImage(width, height, 1, 3uy, Format.RGB, ChannelType.UnsignedShort, gc.AddrOfPinnedObject()) |> IL.check "could not set image data"
         IL.ConvertImage(Format.RGB, ChannelType.UnsignedByte) |> IL.check "could not convert image"
     
-        IL.SaveImage("C:\\Users\\haaser\\Desktop\\test.png") |> IL.check "could not save image"
+        use s = new System.IO.FileStream("C:\\Users\\haaser\\Desktop\\test2.png", IO.FileMode.Create)
+        IL.SaveStream(ImageType.Png, s)
 
         gc.Free()
         IL.BindImage(0)
