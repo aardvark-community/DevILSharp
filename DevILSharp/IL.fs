@@ -1,14 +1,51 @@
 ﻿namespace DevILSharp
 
+open System.Runtime.InteropServices
+open System.Runtime.CompilerServices
+open System
+open System.IO
+open System.Reflection
+open System.IO.Compression
+
+
+module Bootstrap =
+    let private save (entry : ZipArchiveEntry) =
+        if entry.Length > 0L then
+            let name = entry.Name
+            use stream = entry.Open()
+            let arr = Array.zeroCreate (int entry.Length)
+            let mutable read = 0
+            while read < arr.Length do
+                let r = stream.Read(arr, read, arr.Length - read)
+                read <- read + r
+            File.WriteAllBytes(name, arr)
+
+    let Init() =
+        let ass = Assembly.GetExecutingAssembly()
+        use stream = ass.GetManifestResourceStream("DevIL.zip")
+        use archive = new ZipArchive(stream)
+
+        let os =
+            match Environment.OSVersion.Platform with
+                | PlatformID.Unix -> "Linux"
+                | PlatformID.MacOSX -> "Mac"
+                | _ -> "Windows"
+
+        let arch =
+            if IntPtr.Size = 4 then "x86"
+            else "AMD64"
+
+        let prefix = sprintf "%s_%s/" os arch
+
+        let entries = archive.Entries |> Seq.filter (fun a -> a.FullName.StartsWith prefix) |> Seq.toList
+        
+        for e in entries do
+            save e
+
 module IL =
-    open System.Runtime.InteropServices
-    open System.Runtime.CompilerServices
 
     [<Literal>]
     let lib = "DevIL.dll"
-
-
-//    type ILenum = int
 
     /// <summary>
     /// Sets the active image to a frame in an animation.
@@ -46,13 +83,11 @@ module IL =
     [<DllImport(lib, EntryPoint="ilClearImage")>]
     extern bool ClearImage();
 
-//    [<DllImport(lib)>]
-
     [<DllImport(lib, EntryPoint="ilCloneCurImage")>]
     extern int CloneCurImage();
 
     [<DllImport(lib, EntryPoint="ilCompressDXT")>]
-    extern nativeint CompressDXT(nativeint Data, int Width, int Height, int Depth, CompressedDataFormat DXTCFormat, int* DXTCSize);
+    extern nativeint CompressDXT(nativeint Data, int Width, int Height, int Depth, CompressedDataFormat DXTCFormat, int& DXTCSize);
 
     [<DllImport(lib, EntryPoint="ilCompressFunc")>]
     extern bool CompressFunc(CompressMode Mode);
@@ -79,14 +114,13 @@ module IL =
     extern void DeleteImage(int Num);
 
     [<DllImport(lib, EntryPoint="ilDeleteImages")>]
-    extern void DeleteImages(nativeint Num, int *Images);
+    extern void DeleteImages(nativeint Num, int[] Images);
 
     [<DllImport(lib, EntryPoint="ilDetermineType")>]
     extern ImageType DetermineType(string FileName);
 
-//    [<DllImport(lib)>]
-//    [<DllImport(lib, EntryPoint="ilDetermineTypeF")>]
-//    extern ILenum DetermineTypeF(ILHANDLE File);
+    [<DllImport(lib, EntryPoint="ilDetermineTypeF")>]
+    extern ImageType DetermineTypeF(void* File);
 
     [<DllImport(lib, EntryPoint="ilDetermineTypeL")>]
     extern ImageType DetermineTypeL(void *Lump, int Size);
@@ -110,7 +144,7 @@ module IL =
     extern bool FormatFunc(Format Mode);
 
     [<DllImport(lib, EntryPoint="ilGenImages")>]
-    extern void GenImages(nativeint Num, int *Images);
+    extern void GenImages(nativeint Num, int[] Images);
 
     [<DllImport(lib, EntryPoint="ilGenImage")>]
     extern int GenImage();
@@ -122,7 +156,7 @@ module IL =
     extern bool GetBoolean(GetBooleanName Mode);
 
     [<DllImport(lib, EntryPoint="ilGetBooleanv")>]
-    extern void GetBooleanv(GetBooleanName Mode, bool *Param);
+    extern void GetBooleanv(GetBooleanName Mode, bool[] Param);
     
     [<DllImport(lib, EntryPoint="ilGetData")>]
     extern nativeint GetData();
@@ -137,7 +171,7 @@ module IL =
     extern int GetInteger(GetName Mode);
 
     [<DllImport(lib, EntryPoint="ilGetIntegerv")>]
-    extern void GetIntegerv(GetName Mode, int *Param);
+    extern void GetIntegerv(GetName Mode, int[] Param);
 
     let GetFormat() =
         GetInteger(GetName.ImageFormat) |> unbox<Format>
@@ -163,6 +197,7 @@ module IL =
     [<DllImport(lib, EntryPoint="ilInit")>]
     extern void Init();
 
+
     [<DllImport(lib, EntryPoint="ilImageToDxtcData")>]
     extern bool ImageToDxtcData(CompressedDataFormat Format);
 
@@ -178,8 +213,8 @@ module IL =
     [<DllImport(lib, EntryPoint="ilIsValid")>]
     extern bool IsValid(ImageType Type, string FileName);
 
-//    [<DllImport(lib, EntryPoint="ilIsValidF")>]
-//    extern bool IsValidF(ILenum Type, ILHANDLE File);
+    [<DllImport(lib, EntryPoint="ilIsValidF")>]
+    extern bool IsValidF(ImageType Type, void* File);
 
     [<DllImport(lib, EntryPoint="ilIsValidL")>]
     extern bool IsValidL(ImageType Type, void *Lump, int Size);
@@ -190,14 +225,28 @@ module IL =
     [<DllImport(lib, EntryPoint="ilLoad")>]
     extern bool Load(ImageType Type, string FileName);
 
-//    [<DllImport(lib, EntryPoint="ilLoadF")>]
-//    extern bool LoadF(ILenum Type, ILHANDLE File);
+    [<DllImport(lib, EntryPoint="ilLoadF")>]
+    extern bool LoadF(ImageType Type, void* File);
 
     [<DllImport(lib, EntryPoint="ilLoadImage")>]
     extern bool LoadImage(string FileName);
 
     [<DllImport(lib, EntryPoint="ilLoadL")>]
     extern bool LoadL(ImageType Type, void *Lump, int Size);
+
+    let LoadStream (imageType : ImageType, s : System.IO.Stream) =
+        let bytes = Array.zeroCreate (int s.Length)
+        let mutable read = 0
+        while read < bytes.Length do
+            let r = s.Read(bytes, read, bytes.Length - read)
+            read <- read + r
+
+        let gc = GCHandle.Alloc(bytes, GCHandleType.Pinned)
+        let res = LoadL(imageType, gc.AddrOfPinnedObject(), bytes.Length)
+        gc.Free()
+
+        res
+
 
     [<DllImport(lib, EntryPoint="ilLoadPal")>]
     extern bool LoadPal(string FileName);
@@ -262,14 +311,15 @@ module IL =
     [<DllImport(lib, EntryPoint="ilSave")>]
     extern bool Save(ImageType Type, string FileName);
 
-//    [<DllImport(lib, EntryPoint="ilSaveF")>]
-//    extern int SaveF(ILenum Type, ILHANDLE File);
+    [<DllImport(lib, EntryPoint="ilSaveF")>]
+    extern int SaveF(ImageType Type, void* File);
 
     [<DllImport(lib, EntryPoint="ilSaveImage")>]
     extern bool SaveImage(string FileName);
 
     [<DllImport(lib, EntryPoint="ilSaveL")>]
     extern int SaveL(ImageType Type, void *Lump, int Size);
+
 
     [<DllImport(lib, EntryPoint="ilSavePal")>]
     extern bool SavePal(string FileName);
@@ -316,14 +366,14 @@ module IL =
     [<DllImport(lib, EntryPoint="ilTypeFromExt")>]
     extern ImageType TypeFromExt(string FileName);
 
-//    [<DllImport(lib, EntryPoint="ilTypeFunc")>]
-//    extern bool TypeFunc(ILenum Mode);
+    [<DllImport(lib, EntryPoint="ilTypeFunc")>]
+    extern bool TypeFunc(ChannelType Mode);
 
     [<DllImport(lib, EntryPoint="ilLoadData")>]
     extern bool LoadData(string FileName, int Width, int Height, int Depth, byte Bpp);
 
-//    [<DllImport(lib, EntryPoint="ilLoadDataF")>]
-//    extern bool LoadDataF(ILHANDLE File, int Width, int Height, int Depth, byte Bpp);
+    [<DllImport(lib, EntryPoint="ilLoadDataF")>]
+    extern bool LoadDataF(void* File, int Width, int Height, int Depth, byte Bpp);
 
     [<DllImport(lib, EntryPoint="ilLoadDataL")>]
     extern bool LoadDataL(void *Lump, int Size, int Width, int Height, int Depth, byte Bpp);
