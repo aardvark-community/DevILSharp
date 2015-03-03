@@ -13,7 +13,7 @@ Target "Restore" (fun () ->
 
     let defaultNuGetSources = RestorePackageHelper.RestorePackageDefaults.Sources
     for pc in packageConfigs do
-        RestorePackage (fun p -> { p with OutputPath = "Packages" }) pc
+        RestorePackage (fun p -> { p with OutputPath = "packages" }) pc
 
 
 )

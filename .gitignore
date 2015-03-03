@@ -1,6 +1,5 @@
-/*.suo
-bin/
+*.suo
 obj/
 packages/
-tools
 *.swp
+bin/
