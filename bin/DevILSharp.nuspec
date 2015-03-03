@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>DevILSharp</id>
+        <version>0.0.1</version>
+        <authors>krauthaufen</authors>
+        <owners>krauthaufen</owners>
+        <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
+        <projectUrl>about:blank</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>very basic wrapper around DevIL including and managing native dependencies at runtime</description>
+        <summary>very basic wrapper around DevIL including and managing native dependencies at runtime</summary>
+        <releaseNotes>initial version</releaseNotes>
+		<copyright>Copyright © 2015 krauthaufen</copyright>
+        <language>en-US</language>
+        <tags>image loading DevIL</tags>
+    </metadata>
+    <files>
+        <file src="Release\DevILSharp.dll" target="lib\net45\DevILSharp.dll" />
+		<file src="Release\DevILSharp.dll.config" target="lib\net45\DevILSharp.dll.config" />
+    </files>
+</package>
