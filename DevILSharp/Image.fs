@@ -22,6 +22,11 @@ module private Memory =
             | PlatformID.MacOSX -> Libc.memcpy(dest, src, size)
             | _ -> MSVCRT.memcpy(dest, src, size)
 
+type MirrorFlags =
+    | None      = 0x0000
+    | MirrorX   = 0x0001
+    | MirrorY   = 0x0002
+
 type Image private(handle : int) =
 
     static let l = obj()
@@ -92,17 +97,16 @@ type Image private(handle : int) =
         new Image(id)
 
     static member Load(arr : byte[], imageType : ImageType) =
-        use f = MemoryMappedFile.CreateNew("test", arr.LongLength)
-        f.CreateViewAccessor().WriteArray(0L, arr, 0, arr.Length)
-
-        
         let id = IL.GenImage()
         lock l (fun () ->
             let old = IL.GetInteger(IntName.CurrentImage)
+            let gc = GCHandle.Alloc(arr, GCHandleType.Pinned)
             try
                 IL.BindImage(id)
-                IL.LoadF(imageType, f.SafeMemoryMappedFileHandle.DangerousGetHandle()) |> check
+                let gc = GCHandle.Alloc(arr, GCHandleType.Pinned)
+                IL.LoadL(imageType, gc.AddrOfPinnedObject(), arr.Length) |> check
             finally
+                gc.Free()
                 IL.BindImage(old)
         )
         new Image(id)
@@ -162,7 +166,65 @@ type Image private(handle : int) =
         run (fun () ->
             ILU.FlipImage() |> check
         )
+
+    member x.Mirror (flags : MirrorFlags) =
+        run (fun () ->
+            if flags &&& MirrorFlags.MirrorY <> MirrorFlags.None then
+                ILU.Mirror() |> check
+
+            if flags &&& MirrorFlags.MirrorX <> MirrorFlags.None then
+                ILU.FlipImage() |> check
+
+
+            infoCache <- emptyInfo
+        )
+
+    member x.EdgeDetectSobel() =
+        run (fun () ->
+            ILU.EdgeDetectS() |> check
+        )
         
+    member x.EdgeDetectPrewitt() =
+        run (fun () ->
+            ILU.EdgeDetectP() |> check
+        )
+
+    member x.Sharpen(factor : float, iterations : int) =
+        run (fun () ->
+            ILU.Sharpen(float32 factor, iterations) |> check
+        )
+
+    member x.AddNoise(tolerance : float) =
+        run (fun () ->
+            ILU.Noisify(float32 tolerance) |> check
+        )
+
+    member x.Emboss() =
+        run (fun () ->
+            ILU.Emboss() |> check
+        )
+
+    member x.Pixelize(pixSize : int) =
+        run (fun () ->
+            ILU.Pixelize(pixSize) |> check
+        )
+
+    member x.Saturate(sat : float) =
+        run (fun () ->
+            ILU.Saturate1f(float32 sat) |> check
+        )
+
+    member x.Saturate(r : float, g : float, b : float, sat : float) =
+        run (fun () ->
+            ILU.Saturate4f(float32 r, float32 g, float32 b, float32 sat) |> check
+        )
+
+    member x.ScaleColors(r : float, g : float, b : float) =
+        run (fun () ->
+            ILU.ScaleColours(float32 r, float32 g, float32 b) |> check
+        )
+
+
     member x.GammaCorrect(gamma : float) =
         run (fun () ->
             ILU.GammaCorrect(float32 gamma) |> check

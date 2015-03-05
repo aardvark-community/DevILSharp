@@ -1,29 +1,49 @@
-﻿//#if INTERACTIVE
-//#r @"..\bin\Debug\DevilSharp.dll"
-//#else
-//namespace DevILSharp.Demo
-//#endif
+﻿#if INTERACTIVE
+#r @"..\bin\Debug\DevilSharp.dll"
+#else
+namespace DevILSharp.Demo
+#endif
 
 open System
 open System.Runtime.InteropServices
 open DevILSharp
+open System.Diagnostics
 
 module Demo = 
+
+    let probe (name : string) (f : unit -> 'a) =
+        let sw = Stopwatch()
+        sw.Start()
+        let res = f ()
+        sw.Stop()
+        printfn "%s took: %Ams" name sw.Elapsed.TotalMilliseconds
+        res
+
     let imageTest() =
         Bootstrap.Init()
         IL.Init()
         ILU.Init()
         IL.Enable(EnableCap.AbsoluteOrigin) |> ignore
-        let img = Image.Load (System.IO.File.ReadAllBytes(@"C:\Users\schorsch\Desktop\small.png"), ImageType.Png)
-        img.Convert(ChannelFormat.BGRA, ChannelType.UnsignedByte)
-        img.FlipY()
+        let img = 
+            probe "load" (fun () -> Image.Load (System.IO.File.ReadAllBytes(@"C:\Users\schorsch\Desktop\SixteenBitRGB.tif"), ImageType.Tif))
+
+        probe "convert" (fun () -> img.Convert(ChannelFormat.BGRA, ChannelType.UnsignedByte))
+
+        //probe "flip" (fun () -> img.FlipY())
 
         let data : byte[] = Array.zeroCreate img.DataSize
         img.CopyTo(data :> System.Array)
 
-        printfn "img: %A %A %A" img.ChannelFormat img.ChannelType data
+        probe "mirror" (fun () -> img.Mirror(MirrorFlags.MirrorX ||| MirrorFlags.MirrorY))
 
-        img.Save @"C:\Users\schorsch\Desktop\SixteenBitRGB2.png"
+
+        probe "copy" (fun () -> img.CopyTo(data :> System.Array))
+
+        probe "scale" (fun () -> img.Scale(0.25, Filter.Lanczos3))
+
+        //printfn "img: %A %A %A" img.ChannelFormat img.ChannelType data
+
+        probe "save" (fun () -> img.Save @"C:\Users\schorsch\Desktop\SixteenBitRGB2.png")
         ()
 
     let test() =
@@ -89,9 +109,9 @@ module Demo =
         printfn "%A" arr
 
         IL.ShutDown()
-
-[<EntryPoint>]
-let main argv =
-    Demo.imageTest()
-    0
+//
+//[<EntryPoint>]
+//let main argv =
+//    Demo.imageTest()
+//    0
 

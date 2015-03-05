@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9481fa21-b523-4c7b-8916-2cd8de7ffd7a</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>DevILSharp</RootNamespace>
     <AssemblyName>DevILSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
