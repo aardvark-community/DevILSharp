@@ -17,6 +17,5 @@
     </metadata>
     <files>
         <file src="Release\DevILSharp.dll" target="lib\net45\DevILSharp.dll" />
-		<file src="Release\DevILSharp.dll.config" target="lib\net45\DevILSharp.dll.config" />
     </files>
 </package>
