@@ -1,6 +1,6 @@
 ﻿namespace DevILSharp
 
-type GetName =
+type IntName =
     | CurrentImage = 0x0DF7
     | MaxQuantizationIndices = 0x0644
     | NeuQuantizationSample = 0x0643
@@ -31,8 +31,8 @@ type GetName =
     | ImagePaletteColumnCount = 0x0DEF
     | ImageFormat = 0x0DEA
     | ImageType = 0x0DEB
-
-type GetBooleanName =
+    | Filter = 0x2600
+type BooleanName =
     | KeepDxtData           = 0x070C
     | BitmapRle             = 0x0714
     | PngInterlace          = 0x0712
@@ -40,7 +40,7 @@ type GetBooleanName =
     | TgaCreateStamp        = 0x0710
     | TgaRle                = 0x0713
 
-type GetStringName =
+type StringName =
     | TgaID = 0x0717
     | TgaAuthorName = 0x0718
     | TgaAuthorComment = 0x0719
@@ -53,7 +53,7 @@ type GetStringName =
     | TifAuthorName = 0x0720
     | CHeadHeader = 0x0722
 
-type Format =
+type ChannelFormat =
     | ColorIndex      = 0x1900
     | Alpha           = 0x1906
     | RGB             = 0x1907
@@ -74,7 +74,7 @@ type ChannelType =
     | Double         = 0x140A
     | Half           = 0x140B
 
-type PalletteType =
+type PaletteType =
     | None    = 0x0400
     | Rgb24   = 0x0401
     | Rgb32   = 0x0402
@@ -259,3 +259,34 @@ type EnableCap =
 type OriginMode =
     | LowerLeft = 0x0601
     | UpperLeft = 0x0602
+
+type Language =
+    | English = 0x0800
+    | Arabic = 0x0801
+    | Dutch = 0x0802
+    | Japanese = 0x0803
+    | Spanish = 0x0804
+    | German = 0x0805
+    | French = 0x0806
+
+type ImageParameterName =
+    | Filter = 0x2600
+    | Placement = 0x0700
+
+type Placement =
+    | LowerLeft      = 0x0701
+    | LowerRight     = 0x0702
+    | UpperLeft      = 0x0703
+    | UpperRight     = 0x0704
+    | Center         = 0x0705
+
+type Filter =
+    | Nearest        = 0x2601
+    | Linear         = 0x2602
+    | Bilinear       = 0x2603
+    | Box            = 0x2604
+    | Triangle       = 0x2605
+    | Bell           = 0x2606
+    | BSpline        = 0x2607
+    | Lanczos3       = 0x2608
+    | Mitchell       = 0x2609

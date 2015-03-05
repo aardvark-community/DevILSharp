@@ -4,56 +4,9 @@ open System.Runtime.InteropServices
 open System.Runtime.CompilerServices
 open System
 open System.IO
-open System.Reflection
-open System.IO.Compression
-
-
-module Bootstrap =
-    let private config = 
-        """<configuration>
-  <dllmap os="linux" dll="DevIL.dll" target="libIL.so"/>
-  <dllmap os="linux" dll="ILU.dll" target="libILU.so"/>
-  <dllmap os="linux" dll="ILUT.dll" target="libILUT.so"/>
-</configuration>
-"""
-
-    let private save (entry : ZipArchiveEntry) =
-        if entry.Length > 0L then
-            let name = entry.Name
-            use stream = entry.Open()
-            let arr = Array.zeroCreate (int entry.Length)
-            let mutable read = 0
-            while read < arr.Length do
-                let r = stream.Read(arr, read, arr.Length - read)
-                read <- read + r
-            File.WriteAllBytes(name, arr)
-
-    let Init() =
-        let ass = Assembly.GetExecutingAssembly()
-        use stream = ass.GetManifestResourceStream("DevIL.zip")
-        use archive = new ZipArchive(stream)
-
-        File.WriteAllText("DevILSharp.dll.config", config)
-
-        let os =
-            match Environment.OSVersion.Platform with
-                | PlatformID.Unix -> "Linux"
-                | PlatformID.MacOSX -> "Mac"
-                | _ -> "Windows"
-
-        let arch =
-            if IntPtr.Size = 4 then "x86"
-            else "AMD64"
-
-        let prefix = sprintf "%s_%s/" os arch
-
-        let entries = archive.Entries |> Seq.filter (fun a -> a.FullName.StartsWith prefix) |> Seq.toList
-        
-        for e in entries do
-            save e
 
 module IL =
-
+    
     [<Literal>]
     let lib = "DevIL.dll"
 
@@ -103,16 +56,16 @@ module IL =
     extern bool CompressFunc(CompressMode Mode);
 
     [<DllImport(lib, EntryPoint="ilConvertImage")>]
-    extern bool ConvertImage(Format DestFormat, ChannelType DestType);
+    extern bool ConvertImage(ChannelFormat DestFormat, ChannelType DestType);
 
     [<DllImport(lib, EntryPoint="ilConvertPal")>]
-    extern bool ConvertPal(PalletteType DestFormat);
+    extern bool ConvertPal(PaletteType DestFormat);
 
     [<DllImport(lib, EntryPoint="ilCopyImage")>]
     extern bool CopyImage(int Src);
 
     [<DllImport(lib, EntryPoint="ilCopyPixels")>]
-    extern int CopyPixels(int XOff, int YOff, int ZOff, int Width, int Height, int Depth, Format Format, ChannelType Type, void *Data);
+    extern int CopyPixels(int XOff, int YOff, int ZOff, int Width, int Height, int Depth, ChannelFormat Format, ChannelType Type, void *Data);
 
     [<DllImport(lib, EntryPoint="ilCreateSubImage")>]
     extern int CreateSubImage(SubImageType Type, int Num);
@@ -151,7 +104,7 @@ module IL =
     extern void FlipSurfaceDxtcData();
 
     [<DllImport(lib, EntryPoint="ilFormatFunc")>]
-    extern bool FormatFunc(Format Mode);
+    extern bool FormatFunc(ChannelFormat Mode);
 
     [<DllImport(lib, EntryPoint="ilGenImages")>]
     extern void GenImages(nativeint Num, int[] Images);
@@ -163,10 +116,10 @@ module IL =
     extern nativeint GetAlpha(ChannelType Type);
 
     [<DllImport(lib, EntryPoint="ilGetBoolean")>]
-    extern bool GetBoolean(GetBooleanName Mode);
+    extern bool GetBoolean(BooleanName Mode);
 
     [<DllImport(lib, EntryPoint="ilGetBooleanv")>]
-    extern void GetBooleanv(GetBooleanName Mode, bool[] Param);
+    extern void GetBooleanv(BooleanName Mode, bool[] Param);
     
     [<DllImport(lib, EntryPoint="ilGetData")>]
     extern nativeint GetData();
@@ -178,16 +131,16 @@ module IL =
     extern ErrorCode GetError();
 
     [<DllImport(lib, EntryPoint="ilGetInteger")>]
-    extern int GetInteger(GetName Mode);
+    extern int GetInteger(IntName Mode);
 
     [<DllImport(lib, EntryPoint="ilGetIntegerv")>]
-    extern void GetIntegerv(GetName Mode, int[] Param);
+    extern void GetIntegerv(IntName Mode, int[] Param);
 
     let GetFormat() =
-        GetInteger(GetName.ImageFormat) |> unbox<Format>
+        GetInteger(IntName.ImageFormat) |> unbox<ChannelFormat>
 
     let GetDataType() =
-        GetInteger(GetName.ImageType) |> unbox<ChannelType>
+        GetInteger(IntName.ImageType) |> unbox<ChannelType>
 
     [<DllImport(lib, EntryPoint="ilGetLumpPos")>]
     extern int GetLumpPos();
@@ -196,7 +149,7 @@ module IL =
     extern nativeint GetPalette();
 
     [<DllImport(lib, EntryPoint="ilGetString")>]
-    extern string GetString(GetStringName StringName);
+    extern string GetString(StringName StringName);
 
 //    [<DllImport(lib, EntryPoint="ilHint")>]
 //    extern void Hint(ILenum Target, ILenum Mode);
@@ -281,7 +234,7 @@ module IL =
     extern void PushAttrib(int Bits);
 
     [<DllImport(lib, EntryPoint="ilRegisterFormat")>]
-    extern void RegisterFormat(Format Format);
+    extern void RegisterFormat(ChannelFormat Format);
 
 //    [<DllImport(lib, EntryPoint="ilRegisterLoad")>]
 //    extern bool RegisterLoad(string Ext, IL_LOADPROC Load);
@@ -299,7 +252,7 @@ module IL =
     extern void RegisterOrigin(OriginMode Origin);
 
     [<DllImport(lib, EntryPoint="ilRegisterPal")>]
-    extern void RegisterPal(void *Pal, int Size, PalletteType Type);
+    extern void RegisterPal(void *Pal, int Size, PaletteType Type);
 
 //    [<DllImport(lib, EntryPoint="ilRegisterSave")>]
 //    extern bool RegisterSave(string Ext, IL_SAVEPROC Save);
@@ -364,19 +317,19 @@ module IL =
     extern bool SetDuration(int Duration);
 
     [<DllImport(lib, EntryPoint="ilSetInteger")>]
-    extern void SetInteger(GetName Mode, int Param);
+    extern void SetInteger(IntName Mode, int Param);
 
 //    [<DllImport(lib, EntryPoint="ilSetMemory")>]
 //    extern void SetMemory(mAlloc, mFree);
 
     [<DllImport(lib, EntryPoint="ilSetPixels")>]
-    extern void SetPixels(int XOff, int YOff, int ZOff, int Width, int Height, int Depth, Format Format, ChannelType Type, void *Data);
+    extern void SetPixels(int XOff, int YOff, int ZOff, int Width, int Height, int Depth, ChannelFormat Format, ChannelType Type, void *Data);
 
 //    [<DllImport(lib, EntryPoint="ilSetRead")>]
 //    extern void SetRead(fOpenRProc, fCloseRProc, fEofProc, fGetcProc, fReadProc, fSeekRProc, fTellRProc);
 
     [<DllImport(lib, EntryPoint="ilSetString")>]
-    extern void SetString(GetStringName Mode,  string String);
+    extern void SetString(StringName Mode,  string String);
 
 //    [<DllImport(lib, EntryPoint="ilSetWrite")>]
 //    extern void SetWrite(fOpenWProc, fCloseWProc, fPutcProc, fSeekWProc, fTellWProc, fWriteProc);
@@ -388,7 +341,7 @@ module IL =
     extern bool SurfaceToDxtcData(CompressedDataFormat Format);
 
     [<DllImport(lib, EntryPoint="ilTexImage")>]
-    extern bool TexImage(int Width, int Height, int Depth, byte NumChannels, Format Format, ChannelType Type, void *Data);
+    extern bool TexImage(int Width, int Height, int Depth, byte NumChannels, ChannelFormat Format, ChannelType Type, void *Data);
 
     [<DllImport(lib, EntryPoint="ilTexImageDxtc")>]
     extern bool TexImageDxtc(int w, int h, int d, CompressedDataFormat DxtFormat, nativeint data);
