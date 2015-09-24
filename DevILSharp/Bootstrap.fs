@@ -14,6 +14,8 @@ open System.IO.Compression
 /// </summary>
 module Bootstrap =
 
+    let mutable private initialized = false
+
     // since Devil.dll is called libIL.so on linux system we need to
     // write a config file remapping the dll name.
     let private config = 
@@ -40,25 +42,27 @@ module Bootstrap =
     /// current directory allowing them to be subsequently loaded.
     /// </summary>
     let Init() =
-        let ass = Assembly.GetExecutingAssembly()
-        use stream = ass.GetManifestResourceStream("DevIL.zip")
-        use archive = new ZipArchive(stream)
+        if not initialized then
+            initialized <- true
+            let ass = Assembly.GetExecutingAssembly()
+            use stream = ass.GetManifestResourceStream("DevIL.zip")
+            use archive = new ZipArchive(stream)
 
-        File.WriteAllText("DevILSharp.dll.config", config)
+            File.WriteAllText("DevILSharp.dll.config", config)
 
-        let os =
-            match Environment.OSVersion.Platform with
-                | PlatformID.Unix -> "Linux"
-                | PlatformID.MacOSX -> "Mac"
-                | _ -> "Windows"
+            let os =
+                match Environment.OSVersion.Platform with
+                    | PlatformID.Unix -> "Linux"
+                    | PlatformID.MacOSX -> "Mac"
+                    | _ -> "Windows"
 
-        let arch =
-            if IntPtr.Size = 4 then "x86"
-            else "AMD64"
+            let arch =
+                if IntPtr.Size = 4 then "x86"
+                else "AMD64"
 
-        let prefix = sprintf "%s_%s/" os arch
+            let prefix = sprintf "%s_%s/" os arch
 
-        let entries = archive.Entries |> Seq.filter (fun a -> a.FullName.StartsWith prefix) |> Seq.toList
+            let entries = archive.Entries |> Seq.filter (fun a -> a.FullName.StartsWith prefix) |> Seq.toList
         
-        for e in entries do
-            save e
+            for e in entries do
+                save e

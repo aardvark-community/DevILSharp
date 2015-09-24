@@ -7,6 +7,8 @@ open System.IO
 
 module IL =
     
+    let mutable private initialized = false
+
     [<Literal>]
     let lib = "DevIL.dll"
 
@@ -158,7 +160,13 @@ module IL =
     extern bool InvertSurfaceDxtcDataAlpha();
 
     [<DllImport(lib, EntryPoint="ilInit")>]
-    extern void Init();
+    extern void private internalInit();
+
+    let Init() =
+        Bootstrap.Init()
+        if not initialized then
+            initialized <- true
+            internalInit()
 
 
     [<DllImport(lib, EntryPoint="ilImageToDxtcData")>]
