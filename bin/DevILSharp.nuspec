@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>DevILSharp</id>
-        <version>0.0.10</version>
+        <version>0.0.11</version>
         <authors>krauthaufen</authors>
         <owners>krauthaufen</owners>
         <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
