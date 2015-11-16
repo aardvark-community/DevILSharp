@@ -26,7 +26,7 @@ module Bootstrap =
         "</configuration>\r\n"
 
     // utility function saving one ZipEntry to the current directory
-    let private save (entry : ZipArchiveEntry) =
+    let private save (entry : ZipArchiveEntry) bytesWriter =
         if entry.Length > 0L && not <| File.Exists entry.Name then
             let name = entry.Name
             use stream = entry.Open()
@@ -35,7 +35,7 @@ module Bootstrap =
             while read < arr.Length do
                 let r = stream.Read(arr, read, arr.Length - read)
                 read <- read + r
-            File.WriteAllBytes(name, arr)
+            bytesWriter arr name
 
     /// <summary>
     /// initialize devil by copying all needed native libraries to the
@@ -44,11 +44,21 @@ module Bootstrap =
     let Init() =
         if not initialized then
             initialized <- true
+
             let ass = Assembly.GetExecutingAssembly()
+
+            let location = Path.GetDirectoryName(ass.Location)
+            let writeBytesSafe (bytes : byte[]) (name : string) =
+                let path = Path.Combine(location,name) 
+                if File.Exists path |> not then 
+                    File.WriteAllBytes(path,bytes)
+
             use stream = ass.GetManifestResourceStream("DevIL.zip")
             use archive = new ZipArchive(stream)
 
-            File.WriteAllText("DevILSharp.dll.config", config)
+            let configPath = Path.Combine(location,"DevILSharp.dll.config")
+            if File.Exists configPath |> not then
+                File.WriteAllText(configPath, config)
 
             let os =
                 match Environment.OSVersion.Platform with
@@ -65,4 +75,6 @@ module Bootstrap =
             let entries = archive.Entries |> Seq.filter (fun a -> a.FullName.StartsWith prefix) |> Seq.toList
         
             for e in entries do
-                save e
+                save e writeBytesSafe
+
+                
