@@ -1,19 +1,20 @@
 @echo off
-echo %~dp0
-
+SETLOCAL
 PUSHD %~dp0
-cls
 
-IF exist packages\FAKE ( echo skipping FAKE download ) ELSE ( 
-echo downloading FAKE
-"bin\nuget.exe" "install" "FAKE" "-OutputDirectory" "packages" "-ExcludeVersion" 
-"bin\nuget.exe" "install" "FSharp.Formatting.CommandTool" "-OutputDirectory" "packages" "-ExcludeVersion"
-"bin\nuget.exe" "install" "SourceLink.Fake" "-OutputDirectory" "packages" "-ExcludeVersion"
-"bin\nuget.exe" "install" "NUnit.Runners" "-OutputDirectory" "packages" "-ExcludeVersion"
+
+.paket\paket.bootstrapper.exe
+if errorlevel 1 (
+  exit /b %errorlevel%
 )
 
-SET TARGET="Default"
+.paket\paket.exe restore --group Build
+if errorlevel 1 (
+  exit /b %errorlevel%
+)
 
-IF NOT [%1]==[] (set TARGET="%1")
+SET FSI_PATH=packages\build\FAKE\tools\Fake.exe
+"%FSI_PATH%" "build.fsx" Dummy --fsiargs build.fsx --shadowcopyreferences+ %* 
 
-"packages\FAKE\tools\Fake.exe" "build.fsx" "target=%TARGET%"
+
+

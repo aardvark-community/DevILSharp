@@ -1,0 +1,7 @@
+type project
+id DevilSharp
+authors VRVis Research Center
+description DevilSharp
+files
+    ..\..\bin\Release\DevilSharp.dll ==> lib\net45
+    ..\..\bin\Release\DevilSharp.pdb ==> lib\net45

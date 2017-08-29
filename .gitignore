@@ -3,3 +3,6 @@ obj/
 packages/
 *.swp
 bin/
+/paket-files
+/packages
+/.paket/paket.exe
