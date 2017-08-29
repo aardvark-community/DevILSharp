@@ -6,3 +6,4 @@ bin/
 /paket-files
 /packages
 /.paket/paket.exe
+/.fake
