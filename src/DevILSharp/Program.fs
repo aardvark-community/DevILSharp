@@ -1,5 +1,5 @@
 ﻿#if INTERACTIVE
-#r @"..\bin\Debug\DevilSharp.dll"
+#r @"..\bin\Debug\DevILSharp.dll"
 #else
 namespace DevILSharp.Demo
 #endif

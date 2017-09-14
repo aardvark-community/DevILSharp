@@ -1,7 +1,7 @@
 type project
-id DevilSharp
-authors VRVis Research Center
-description DevilSharp
+id DevILSharp
+authors Aardvark Platform Team
+description DevILSharp
 files
-    ..\..\bin\Release\DevilSharp.dll ==> lib\net45
-    ..\..\bin\Release\DevilSharp.pdb ==> lib\net45
+    ..\..\bin\Release\DevILSharp.dll ==> lib\net45
+    ..\..\bin\Release\DevILSharp.pdb ==> lib\net45
