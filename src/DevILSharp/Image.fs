@@ -1,6 +1,7 @@
 ﻿namespace DevILSharp
 
 open System
+open System.Security
 open System.Runtime.InteropServices
 open System.IO.MemoryMappedFiles
 
@@ -9,11 +10,11 @@ module private Memory =
     open System.Runtime.InteropServices
 
     module private MSVCRT =
-        [<DllImport("msvcrt.dll")>]
+        [<DllImport("msvcrt.dll"); SuppressUnmanagedCodeSecurity>]
         extern nativeint memcpy(nativeint dest, nativeint src, unativeint size)
 
     module private Libc =
-        [<DllImport("libc")>]
+        [<DllImport("libc"); SuppressUnmanagedCodeSecurity>]
         extern nativeint memcpy(nativeint dest, nativeint src, unativeint size)
 
     let memcpy (dest : nativeint, src : nativeint, size : unativeint) =
