@@ -1,23 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyName>DevILSharp</AssemblyName>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\</OutputPath>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\Release\</OutputPath>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Bootstrap.fs" />
-    <Compile Include="Enums.fs" />
-    <Compile Include="IL.fs" />
-    <Compile Include="ILU.fs" />
-    <Compile Include="Image.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevILSharp\DevILSharp.fsproj" />
+  </ItemGroup>
+  
   <Import Project="..\..\.paket\Paket.Restore.targets" />
+
 </Project>
