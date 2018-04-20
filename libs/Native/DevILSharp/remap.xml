@@ -1,5 +1,3 @@
 <configuration>
-  <dllmap os="linux" dll="DevIL.dll" target="libIL.so"/>
-  <dllmap os="linux" dll="ILU.dll" target="libILU.so"/>
-  <dllmap os="linux" dll="ILUT.dll" target="libILUT.so"/>
+  <dllmap os="linux" dll="libDevIL.so" target="libIL.so"/>
 </configuration>

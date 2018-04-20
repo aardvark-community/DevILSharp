@@ -10,7 +10,7 @@ open System.IO
 module ILU =
 
     [<Literal>]
-    let private lib = "ILU.dll"
+    let private lib = "ILU"
 
     type Info =
         struct
