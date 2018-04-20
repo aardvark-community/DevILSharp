@@ -1,10 +1,4 @@
-﻿#if INTERACTIVE
-#r @"..\bin\Debug\DevILSharp.dll"
-#else
-namespace DevILSharp.Demo
-#endif
-
-open System
+﻿open System
 open System.Runtime.InteropServices
 open DevILSharp
 open System.Diagnostics
@@ -25,7 +19,8 @@ module Demo =
         ILU.Init()
         IL.Enable(EnableCap.AbsoluteOrigin) |> ignore
         let img = 
-            probe "load" (fun () -> Image.Load (System.IO.File.ReadAllBytes(@"C:\Users\schorsch\Desktop\SixteenBitRGB.tif"), ImageType.Tif))
+            probe "load" (fun () -> Image.Load (System.IO.File.ReadAllBytes(@"C:\Users\haaser\Desktop\ps_height_1k.png"), ImageType.Png))
+
 
         probe "convert" (fun () -> img.Convert(ChannelFormat.BGRA, ChannelType.UnsignedByte))
 
@@ -41,9 +36,11 @@ module Demo =
 
         probe "scale" (fun () -> img.Scale(0.25, Filter.Lanczos3))
 
+        probe "noise" (fun () -> img.AddNoise 0.2)
+
         //printfn "img: %A %A %A" img.ChannelFormat img.ChannelType data
 
-        probe "save" (fun () -> img.Save @"C:\Users\schorsch\Desktop\SixteenBitRGB2.png")
+        probe "save" (fun () -> img.Save @"C:\Users\haaser\Desktop\SixteenBitRGB2.png")
         ()
 
     let test() =
@@ -109,9 +106,9 @@ module Demo =
         printfn "%A" arr
 
         IL.ShutDown()
-//
-//[<EntryPoint>]
-//let main argv =
-//    Demo.imageTest()
-//    0
+
+[<EntryPoint>]
+let main argv =
+    Demo.imageTest()
+    0
 

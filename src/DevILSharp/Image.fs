@@ -170,10 +170,10 @@ type Image private(handle : int) =
 
     member x.Mirror (flags : MirrorFlags) =
         run (fun () ->
-            if flags &&& MirrorFlags.MirrorY <> MirrorFlags.None then
+            if flags &&& MirrorFlags.MirrorX <> MirrorFlags.None then
                 ILU.Mirror() |> check
 
-            if flags &&& MirrorFlags.MirrorX <> MirrorFlags.None then
+            if flags &&& MirrorFlags.MirrorY <> MirrorFlags.None then
                 ILU.FlipImage() |> check
 
 

@@ -2,6 +2,4 @@ type project
 id DevILSharp
 authors Aardvark Platform Team
 description DevILSharp
-files
-    ..\..\bin\Release\DevILSharp.dll ==> lib\net45
-    ..\..\bin\Release\DevILSharp.pdb ==> lib\net45
+include-pdbs true

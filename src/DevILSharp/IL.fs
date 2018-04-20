@@ -11,7 +11,7 @@ module IL =
     let mutable private initialized = false
 
     [<Literal>]
-    let lib = "DevIL.dll"
+    let lib = "DevIL"
 
     /// <summary>
     /// Sets the active image to a frame in an animation.
