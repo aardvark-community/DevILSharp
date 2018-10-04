@@ -7,3 +7,4 @@ bin/
 /packages
 /.paket/paket.exe
 /.fake
+/.paket/*.targets
