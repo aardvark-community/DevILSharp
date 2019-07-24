@@ -8,12 +8,12 @@ CONTENT: NONE
 RESTRICTION: == net45
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    FAKE (4.63.2) - content: none
-    Mono.Cecil (0.10) - content: none
-    SourceLink.Fake (1.1) - content: none
+    FAKE (4.63.2)
+    Mono.Cecil (0.10.4)
+    SourceLink.Fake (1.1)
 GITHUB
   remote: vrvis/Aardvark.Fake
-    FULLPROJECT (7bebbfdb07cbf4ec6426be3f813dc367a0614e6a)
+    FULLPROJECT (96926239f65c3d28860054c76882b637163f2841)
       FAKE (>= 4.63 < 4.64)
       Mono.Cecil (>= 0.10.0-beta6 < 0.11)
       SourceLink.Fake (>= 1.1 < 1.2)
