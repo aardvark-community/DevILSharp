@@ -1,7 +1,7 @@
 RESTRICTION: == netstandard2.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    FSharp.Core (4.3.4)
+    FSharp.Core (4.6.2)
 
 GROUP Build
 CONTENT: NONE

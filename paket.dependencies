@@ -1,7 +1,7 @@
 framework: netstandard20
 source https://api.nuget.org/v3/index.json
 
-nuget FSharp.Core                   ~> 4.3.0
+nuget FSharp.Core ~> 4.6.2
 
 group Build
 framework: net45
