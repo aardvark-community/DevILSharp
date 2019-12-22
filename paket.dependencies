@@ -1,8 +1,11 @@
 framework: netstandard20
 source https://api.nuget.org/v3/index.json
 
-nuget FSharp.Core ~> 4.7.0
+nuget FSharp.Core ~> 4.6.2
 
 group Build
+framework: net45
+content: none
 source https://api.nuget.org/v3/index.json
-github aardvark-platform/aardvark.fake:v5
+
+github vrvis/Aardvark.Fake:v4-temp
