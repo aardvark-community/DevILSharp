@@ -5,6 +5,7 @@
   <PropertyGroup>
     <AssemblyName>DevILSharp</AssemblyName>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\</OutputPath>
