@@ -1,3 +1,7 @@
+/build.fsx.lock
+/.paket
+/.fake
+**/.DS_Store
 *.suo
 obj/
 packages/
