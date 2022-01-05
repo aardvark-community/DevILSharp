@@ -7,4 +7,4 @@ group Build
 framework: netstandard2.0
 source https://api.nuget.org/v3/index.json
 
-github aardvark-platform/Aardvark.Fake:v5
+github aardvark-platform/Aardvark.Fake:v511

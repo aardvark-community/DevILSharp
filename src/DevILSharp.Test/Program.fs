@@ -62,9 +62,12 @@ module Demo =
     let run() = 
         Bootstrap.Init()
         IL.Init()
+        printfn "inited"
         IL.Enable(EnableCap.OverwriteExistingFile) |> IL.check "could enable overwrite"
         IL.Enable(EnableCap.AbsoluteOrigin) |> IL.check "could enable absolute origin"
         let img = IL.GenImage()
+
+        printfn "asdasdasd"
 
         IL.BindImage(img)
         use s = new System.IO.FileStream(@"C:\Users\haaser\Desktop\SixteenBitRGB.tif", IO.FileMode.Open)
@@ -109,6 +112,6 @@ module Demo =
 
 [<EntryPoint>]
 let main argv =
-    Demo.imageTest()
+    Demo.run()
     0
 
