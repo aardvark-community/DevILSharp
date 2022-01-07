@@ -12,3 +12,4 @@ bin/
 /.paket/paket.exe
 /.fake
 /.paket/*.targets
+Aardvark.log
