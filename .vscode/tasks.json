@@ -4,6 +4,32 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "restore-tools",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [ "tool", "restore" ],
+            "group": "build",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false,
+                "close": true
+            }
+        },
+        {
+            "label": "restore",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [ "paket", "restore" ],
+            "group": "build"
+        },
+        {
             "label": "build",
             "command": "dotnet",
             "type": "shell",
@@ -19,6 +45,7 @@
                 "kind": "build",
                 "isDefault": true
             },
+            "dependsOn": [ "restore" ],
             
             "presentation": {
                 "reveal": "always"
