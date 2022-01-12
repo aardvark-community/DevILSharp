@@ -14,3 +14,5 @@ bin/
 /.fake
 /.paket/*.targets
 Aardvark.log
+/.ionide
+.vs/

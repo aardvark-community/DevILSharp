@@ -54,9 +54,9 @@
         },
         {
             "label": "install",
-            "command": ".paket/paket",
+            "command": "dotnet",
             "type": "shell",
-            "args": [ "install" ],
+            "args": [ "paket", "install" ],
             "group": "build",
             "presentation": {
                 "reveal": "always"
