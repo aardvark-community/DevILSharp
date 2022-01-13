@@ -1,3 +1,6 @@
+### 0.2.15
+* better package info
+
 ### 0.2.14
 * aardvark.build
 
