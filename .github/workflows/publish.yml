@@ -20,7 +20,7 @@ jobs:
         run: dotnet build src/DevILSharp.sln -c Release
       - name: pack
         shell: sh
-        run: dotnet pack src/DevILSharp.sln -c Release
+        run: dotnet pack src/DevILSharp.sln -c Release -o bin/pack
       - name: push
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
