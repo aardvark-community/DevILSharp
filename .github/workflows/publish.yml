@@ -1,0 +1,21 @@
+name: Publish
+on: [push]
+
+jobs:
+  publish:
+    name: Publish NuGet Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        shell: sh
+        run: dotnet build src/DevILSharp.sln -c Release
+      - name: pack
+        shell: sh
+        run: dotnet pack src/DevILSharp.sln -c Release
+      - name: push
+        env:
+          NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        shell: sh
+        run: dotnet nuget push "bin/pack/*.nupkg" -k %NUGET_KEY% -s "https://api.nuget.org/v3/index.json" --skip-duplicate
