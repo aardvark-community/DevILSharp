@@ -8,6 +8,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - name: tools
+        shell: sh
+        run: dotnet tool restore
       - name: build
         shell: sh
         run: dotnet build src/DevILSharp.sln -c Release
