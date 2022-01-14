@@ -4,7 +4,7 @@ on: [push]
 jobs:
   publish:
     name: Publish NuGet Package
-    runs-on: macos-latest
+    runs-on: windows-latest
     steps: 
       - name: checkout
         uses: actions/checkout@v2
@@ -13,22 +13,18 @@ jobs:
         with:
           dotnet-version: '6.0.100'
       - name: tools
-        shell: sh
         run: dotnet tool restore
       - name: restore
-        shell: sh
         run: dotnet paket restore
       - name: build
-        shell: sh
-        run: dotnet build src/DevILSharp.sln -c Release
+        run: dotnet build src\DevILSharp.sln -c Release
       - name: pack
-        shell: sh
-        run: dotnet pack src/DevILSharp.sln -v:d -c Release -o bin/pack
+        run: dotnet pack src\DevILSharp.sln -v:d -c Release -o bin\pack
       - name: artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
-          path: bin/pack/
+          path: bin\pack
       # - name: push
       #   env:
       #     NUGET_KEY: ${{ secrets.NUGET_KEY }}
