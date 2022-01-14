@@ -1,3 +1,6 @@
+### 0.2.18
+* finally working via Aardvark.Build
+
 ### 0.2.17
 * fixed Aardvark.Build packing
 
