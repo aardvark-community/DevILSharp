@@ -2,5 +2,5 @@ framework: netstandard20, net6.0
 source https://api.nuget.org/v3/index.json
 
 nuget FSharp.Core >= 4.6.2 lowest_matching: true
-nuget Aardvark.Build ~> 1.0.0-prerelease0006
+nuget Aardvark.Build ~> 1.0.0-prerelease0007
 nuget Aardvark.Base ~> 5.1.25
