@@ -15,12 +15,15 @@ jobs:
       - name: tools
         shell: sh
         run: dotnet tool restore
+      - name: restore
+        shell: sh
+        run: dotnet paket restore
       - name: build
         shell: sh
         run: dotnet build src/DevILSharp.sln -c Release
       - name: pack
         shell: sh
-        run: dotnet pack src/DevILSharp.sln -c Release -o bin/pack
+        run: dotnet pack src/DevILSharp.sln -v:d -c Release -o bin/pack
       - name: artifacts
         uses: actions/upload-artifact@v2
         with:
