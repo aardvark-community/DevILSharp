@@ -4,7 +4,7 @@ on: [push]
 jobs:
   publish:
     name: Publish NuGet Package
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps: 
       - name: checkout
         uses: actions/checkout@v2
