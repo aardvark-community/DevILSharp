@@ -21,8 +21,13 @@ jobs:
       - name: pack
         shell: sh
         run: dotnet pack src/DevILSharp.sln -c Release -o bin/pack
-      - name: push
-        env:
-          NUGET_KEY: ${{ secrets.NUGET_KEY }}
-        shell: sh
-        run: dotnet nuget push "bin/pack/*.nupkg" -k $NUGET_KEY -s "https://api.nuget.org/v3/index.json" --skip-duplicate
+      - name: artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: bin/pack/
+      # - name: push
+      #   env:
+      #     NUGET_KEY: ${{ secrets.NUGET_KEY }}
+      #   shell: sh
+      #   run: dotnet nuget push "bin/pack/*.nupkg" -k $NUGET_KEY -s "https://api.nuget.org/v3/index.json" --skip-duplicate
