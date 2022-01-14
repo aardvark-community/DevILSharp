@@ -28,5 +28,5 @@ jobs:
       - name: push
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
-        shell: sh
+        shell: cmd
         run: dotnet nuget push "bin\pack\*.nupkg" -k "%NUGET_KEY%" -s "https://api.nuget.org/v3/index.json" --skip-duplicate
