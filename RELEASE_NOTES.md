@@ -1,5 +1,6 @@
-### 2.0.16
+### 0.2.16
 * removed Aardvark.Build dependency from package
+* fixed release notes
 
 ### 0.2.15
 * better package info
