@@ -13,5 +13,6 @@
         "packages/": true,
         "paket-files/": true,
         "Aardvark.log": true,
+        "bin/": true,
     }
 }
