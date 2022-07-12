@@ -1,5 +1,11 @@
 type project
 id DevILSharp
-authors Aardvark Platform Team
-description DevILSharp
+authors Aardvark Community
+owners Aardvark Community
+projectUrl https://github.com/aardvark-community/DevILSharp
+licenseUrl http://www.apache.org/licenses/LICENSE-2.0.txt
+repositoryType git
+repositoryUrl https://github.com/aardvark-community/DevILSharp
+description
+    DevILSharp is a simple wrapper around DevIL with Aardvark-style native dependencies.
 include-pdbs true

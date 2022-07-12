@@ -1,32 +1,42 @@
 name: Publish
-on: [push]
-
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - RELEASE_NOTES.md 
+      - .github/workflows/publish.yml
 jobs:
-  publish:
-    name: Publish NuGet Package
+  pack:
+    name: Package
     runs-on: windows-latest
-    steps: 
-      - name: checkout
+    steps:  
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: dotnet
+      - name: Install Dotnet
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.100'
-      - name: tools
+      - name: Restore Tools
         run: dotnet tool restore
-      - name: restore
+      - name: Restore
         run: dotnet paket restore
-      - name: build
-        run: dotnet build src\DevILSharp.sln -c Release
-      - name: pack
-        run: dotnet pack src\DevILSharp.sln -v:d -c Release -o bin\pack
-      - name: artifacts
+      - name: Pack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet aardpack src\DevILSharp.sln --notag
+      - name: Upload Packages
         uses: actions/upload-artifact@v2
         with:
-          name: package
+          name: packages
           path: bin\pack
-      - name: push
+      - name: GitHub Packages
+        env:
+          NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
+        shell: cmd
+        run: dotnet nuget push "bin\pack\*.nupkg" -k %NUGET_KEY% -s "https://nuget.pkg.github.com/aardvark-community/index.json" --skip-duplicate
+      - name: NuGet
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
         shell: cmd
-        run: dotnet nuget push "bin\pack\*.nupkg" -k "%NUGET_KEY%" -s "https://api.nuget.org/v3/index.json" --skip-duplicate
+        run: dotnet nuget push "bin\pack\*.nupkg" -k %NUGET_KEY% -s "https://api.nuget.org/v3/index.json" --skip-duplicate

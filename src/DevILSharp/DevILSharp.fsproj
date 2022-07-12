@@ -1,13 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>DevILSharp</AssemblyName>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
-    <Authors>The Aardvark Platform Team</Authors>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/aardvark-community/DevILSharp</RepositoryUrl>
-    <PackageDescription>simple dotnet wrapper around DevIL</PackageDescription>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\Debug\</OutputPath>
