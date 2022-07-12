@@ -1,3 +1,7 @@
+### 0.2.19
+* Updated to DevIL 1.8.0
+* Added Linux native binaries
+
 ### 0.2.18
 * finally working via Aardvark.Build
 
