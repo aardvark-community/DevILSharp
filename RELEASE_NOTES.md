@@ -1,3 +1,6 @@
+### 0.2.20
+* Rebuilt Linux binaries with Ubuntu 20.04 (GLIBC 2.31)
+
 ### 0.2.19
 * Updated to DevIL 1.8.0
 * Added Linux native binaries
