@@ -4,5 +4,5 @@ source https://api.nuget.org/v3/index.json
 storage: none
 
 nuget FSharp.Core           >= 5.0.0 lowest_matching: true
-nuget Aardvark.Build        ~> 1.0.12
+nuget Aardvark.Build        ~> 1.0.19
 nuget Aardvark.Base         ~> 5.2.6
